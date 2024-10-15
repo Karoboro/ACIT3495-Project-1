@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Upload Page</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+	</head>
+	<body>
+		<nav class="nav">
+			<ul>
+				{% if current_user.is_authenticated %}
+					<li class="user">Hi {{ current_user.username }}</li>
+					<li><a href="/stream">Stream Videos</a></li>
+					<li><a class="button logout" href="/logout">Logout</a></li>
+				{% else %}
+					<li><a class="button" href="/login">Sign in</a></li>
+				{% endif %}
+			</ul>
+		</nav>
+		<section class="home">
+			<header class="uploadapp">
+				<h1>Uploading</h1>
+			</header>
+		</section>
+		<hr>
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+			<ul class=flashes>
+			<p>{{ messages[-1] }}</p>
+			</ul>
+		{% endif %}
+		{% endwith %}
+		<section>
+			<form method = "POST" enctype="multipart/form-data">
+				{{ form.hidden_tag() }}
+				<label for="file">File:</label>
+				<div class="input-container">
+					{{ form.file }}
+				</div>
+				<label for="description">Description:</label>
+				<div class="input-container">
+					{{ form.description }}
+				</div>
+				{{ form.submit}}
+		  </form>
+		</section>
+	</body>
+</html>

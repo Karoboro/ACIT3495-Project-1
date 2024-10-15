@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Streaming Page</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+		<!-- backup incase CDN video-js doesn't work
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/video-js.css') }}"> -->
+		<link href="https://vjs.zencdn.net/8.16.1/video-js.css" rel="stylesheet" />
+	</head>
+	<body>
+		<nav class="nav">
+			<ul>
+				{% if current_user.is_authenticated %}
+					<li class="user">Hi {{ current_user.username }}</li>
+					<li><a href="/upload">Upload Videos</a></li>
+					<li><a class="button logout" href="/logout">Logout</a></li>
+				{% else %}
+					<li><a class="button" href="/login">Sign in</a></li>
+				{% endif %}
+			</ul>
+		</nav>
+		<section class="uploadapp">
+			<header>
+				<h1>Streaming</h1>
+			</header>
+		</section>
+		<hr>
+		{% with messages = get_flashed_messages() %}
+		{% if messages %}
+			<ul class=flashes>
+			<p>{{ messages[-1] }}</p>
+			</ul>
+		{% endif %}
+		{% endwith %}
+		<section>
+			{% for result in results %}
+				<p>{{ result.description }} uploader: {{ result.uploader }}</p>
+				<video class="video-js vjs-default-skin"
+				controls preload="auto" width="426" height="240"
+				data-setup="{}">
+				<source src="{{ FILESYSTEM_APP }}/{{ result.url }}"/>
+				</video>
+			{% endfor %}
+		</section>
+	</body>
+</html>

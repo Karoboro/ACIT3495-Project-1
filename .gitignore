@@ -1,3 +1,8 @@
+# Custom options
+*.zip
+*.docx
+Ref/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

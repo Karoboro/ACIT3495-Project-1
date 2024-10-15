@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Login Page</title>
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+		<link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+	</head>
+	<body>
+		<section class="prompt">
+			<h1>Register</h1>
+			{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<ul class=flashes>
+				<p>{{ messages[-1] }}</p>
+				</ul>
+			{% endif %}
+			{% endwith %}
+			<form action="/register" method="post">
+				{{ form.hidden_tag() }}
+				<section>
+					<label for="username">Username</label>
+					{{ form.username }}
+				</section>
+				<section>
+					<label for="password">Password</label>
+					{{ form.password }}
+				</section>
+				<section>
+					<label for="retype-password">Re-enter Password</label>
+					{{ form.re_password }}
+				</section>
+				{{ form.submit }}
+			</form>
+			<hr>
+			<p class="help">Already have an account? <a href="/login">Sign in</a></p>
+		</section>
+	</body>
+</html>

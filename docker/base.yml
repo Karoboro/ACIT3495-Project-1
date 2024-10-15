@@ -1,0 +1,27 @@
+secrets:
+  db_root_password:
+    file: db_root_password.txt
+  db_password:
+    file: db_password.txt
+
+services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      MYSQL_USER: streamer
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password
+      MYSQL_DATABASE: stream_db
+      TZ: America/Vancouver
+      SECRET_KEY_FILE: /run/secrets/app_secret
+    ports:
+      - 3306:3306
+    volumes:
+      - stream_db_data:/var/lib/mysql
+    secrets:
+      - db_root_password
+      - db_password
+
+volumes:
+  stream_db_data:

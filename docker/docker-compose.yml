@@ -1,0 +1,98 @@
+name: acit3495_proj1
+
+secrets:
+  db_root_password:
+    file: db_root_password.txt
+  db_password:
+    file: db_password.txt
+
+services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_root_password
+      MYSQL_USER: streamer
+      MYSQL_PASSWORD_FILE: /run/secrets/db_password
+      MYSQL_DATABASE: stream_db
+      TZ: America/Vancouver
+    ports:
+      - 3306:3306
+    volumes:
+      - stream_db_data:/var/lib/mysql
+    networks:
+      - streamer_net
+    secrets:
+      - db_root_password
+      - db_password
+
+  fs:
+    image: fs_service
+    build:
+      context: fs_service
+      dockerfile: Dockerfile
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 8100:8100
+    volumes:
+      - fs_data:/usr/src/app
+    networks:
+      - streamer_net
+
+  auth:
+    image: login_service
+    build:
+      context: login_service
+      dockerfile: Dockerfile
+    environment:
+      DB_HOSTNAME: db
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - 8000:8000
+    networks:
+      - streamer_net
+
+  upload:
+    image: upload_service
+    build:
+      context: upload_service
+      dockerfile: Dockerfile
+    environment:
+      DB_HOSTNAME: db
+      FILESYSTEM_APP: http://fs:8100
+    restart: always
+    depends_on:
+      - db
+      - auth
+      - fs
+    ports:
+      - 8080:8080
+    networks:
+      - streamer_net
+
+  stream:
+    image: stream_service
+    build:
+      context: stream_service
+      dockerfile: Dockerfile
+    environment:
+      DB_HOSTNAME: db
+    restart: always
+    depends_on:
+      - db
+      - auth
+      - fs
+    ports:
+      - 8090:8090
+    networks:
+      - streamer_net
+
+networks:
+  streamer_net:
+volumes:
+  stream_db_data:
+  fs_data:
